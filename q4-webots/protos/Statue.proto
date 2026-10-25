@@ -1,0 +1,157 @@
+#VRML_SIM R2025a utf8
+# A pedestal with a blocky statue of a big guy with enormous fists (a tribute to a certain wrecker).
+
+PROTO Statue [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "statue"
+  field SFColor    color        0.8 0.76 0.92
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.5
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.98 0.97 0.95
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 1.3 1.3 1
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 1.04
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.9 0.88 0.95
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 1.45 1.45 0.08
+            }
+          }
+        ]
+      }
+      DEF FIGURE Group {
+        children [
+          # legs
+          Pose {
+            translation 0 0.15 1.35
+            children [
+              Shape {
+                appearance DEF STONE PBRAppearance {
+                  baseColor IS color
+                  roughness 0.5
+                  metalness 0
+                }
+                geometry Box {
+                  size 0.26 0.22 0.55
+                }
+              }
+            ]
+          }
+          Pose {
+            translation 0 -0.15 1.35
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.26 0.22 0.55
+                }
+              }
+            ]
+          }
+          # body
+          Pose {
+            translation 0 0 1.95
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.45 0.75 0.7
+                }
+              }
+            ]
+          }
+          # head
+          Pose {
+            translation 0 0 2.5
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.36 0.36 0.36
+                }
+              }
+            ]
+          }
+          # arms up and huge fists
+          Pose {
+            translation 0 0.5 2.3
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.16 0.16 0.7
+                }
+              }
+            ]
+          }
+          Pose {
+            translation 0 -0.5 2.3
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.16 0.16 0.7
+                }
+              }
+            ]
+          }
+          Pose {
+            translation 0 0.52 2.75
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.38 0.38 0.34
+                }
+              }
+            ]
+          }
+          Pose {
+            translation 0 -0.52 2.75
+            children [
+              Shape {
+                appearance USE STONE
+                geometry Box {
+                  size 0.38 0.38 0.34
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.5
+      children [
+        Box {
+          size 1.3 1.3 1
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

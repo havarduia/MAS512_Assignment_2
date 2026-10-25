@@ -1,0 +1,60 @@
+#VRML_SIM R2025a utf8
+# Round litter bin with a white rim.
+
+PROTO Bin [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "bin"
+  field SFColor    color        0.6 0.82 0.85
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.4
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS color
+              roughness 0.6
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.8
+              radius 0.26
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.82
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 1 1
+              roughness 0.5
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.06
+              radius 0.29
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.42
+      children [
+        Cylinder {
+          height 0.84
+          radius 0.28
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

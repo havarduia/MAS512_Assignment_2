@@ -1,0 +1,71 @@
+#VRML_SIM R2025a utf8
+# Street bollard ("dissuasore"): a white post with a band and a round top.
+
+PROTO Bollard [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "bollard"
+  field SFColor    bandColor    0.8 0.74 0.95
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.35
+        children [
+          Shape {
+            appearance DEF POST PBRAppearance {
+              baseColor 0.99 0.98 0.96
+              roughness 0.5
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.7
+              radius 0.11
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.55
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS bandColor
+              roughness 0.5
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.1
+              radius 0.115
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.7
+        children [
+          Shape {
+            appearance USE POST
+            geometry Sphere {
+              radius 0.11
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.4
+      children [
+        Cylinder {
+          height 0.8
+          radius 0.12
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

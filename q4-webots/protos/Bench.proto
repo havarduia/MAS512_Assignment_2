@@ -1,0 +1,53 @@
+#VRML_SIM R2025a utf8
+# Chunky block bench.
+
+PROTO Bench [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "bench"
+  field SFColor    color        0.98 0.85 0.6
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.25
+        children [
+          Shape {
+            appearance DEF SEAT PBRAppearance {
+              baseColor IS color
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 1.8 0.6 0.5
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.25 0.75
+        children [
+          Shape {
+            appearance USE SEAT
+            geometry Box {
+              size 1.8 0.1 0.5
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.25
+      children [
+        Box {
+          size 1.8 0.6 0.5
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

@@ -1,0 +1,131 @@
+#VRML_SIM R2025a utf8
+# Newsstand ("edicola"): a block with a big roof, a dark window and a rack of pastel magazines.
+
+PROTO Kiosk [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "kiosk"
+  field SFColor    color        0.62 0.86 0.8
+  field SFColor    roofColor    1 1 1
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 1.05
+        children [
+          Shape {
+            appearance DEF KIOSK_BODY PBRAppearance {
+              baseColor IS color
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 2 1.6 2.1
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 2.2
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS roofColor
+              roughness 0.6
+              metalness 0
+            }
+            geometry Box {
+              size 2.5 2.1 0.2
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 2.45
+        children [
+          Shape {
+            appearance USE KIOSK_BODY
+            geometry Box {
+              size 1.4 1 0.3
+            }
+          }
+        ]
+      }
+      # window on the -y side
+      Pose {
+        translation 0 -0.805 1.35
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.35 0.36 0.5
+              roughness 0.3
+              metalness 0
+            }
+            geometry Box {
+              size 1.4 0.02 0.8
+            }
+          }
+        ]
+      }
+      # magazine rack: pastel covers
+      Pose {
+        translation -0.55 -0.83 0.55
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0.8 0.86
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 0.3 0.06 0.4
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.15 -0.83 0.55
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.75 0.85 1
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 0.3 0.06 0.4
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.25 -0.83 0.55
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0.95 0.7
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 0.3 0.06 0.4
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 1.1
+      children [
+        Box {
+          size 2 1.6 2.2
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

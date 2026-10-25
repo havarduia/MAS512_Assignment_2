@@ -1,0 +1,125 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Ice-cream cart: a box on two big wheels, an umbrella and three giant scoops.
+
+PROTO GelatoCart [
+  field SFVec3f    translation    0 0 0
+  field SFRotation rotation       0 0 1 0
+  field SFString   name           "gelato cart"
+  field SFColor    color          0.99 0.9 0.94
+  field SFColor    umbrellaColor  0.72 0.9 0.84
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.6
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS color
+              roughness 0.5
+              metalness 0
+            }
+            geometry Box {
+              size 1.4 0.8 0.7
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.98
+        children [
+          Shape {
+            appearance DEF CREAM PBRAppearance {
+              baseColor 1 0.98 0.93
+              roughness 0.5
+              metalness 0
+            }
+            geometry Box {
+              size 1.5 0.9 0.06
+            }
+          }
+        ]
+      }
+      %< const scoops = [[-0.4, [1, 0.8, 0.86]], [0, [0.75, 0.93, 0.82]], [0.4, [0.98, 0.94, 0.78]]]; >%
+      %< for (const [x, c] of scoops) { >%
+      Pose {
+        translation %<= x >% 0 1.13
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor %<= c[0] >% %<= c[1] >% %<= c[2] >%
+              roughness 0.4
+              metalness 0
+            }
+            geometry Sphere {
+              radius 0.15
+              subdivision 2
+            }
+          }
+        ]
+      }
+      %< } >%
+      %< for (const y of [-0.45, 0.45]) { >%
+      Pose {
+        translation 0.25 %<= y >% 0.28
+        rotation 1 0 0 1.5708
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.45 0.42 0.55
+              roughness 0.8
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.08
+              radius 0.28
+            }
+          }
+        ]
+      }
+      %< } >%
+      Pose {
+        translation -0.6 0 1.6
+        children [
+          Shape {
+            appearance USE CREAM
+            geometry Cylinder {
+              height 1.2
+              radius 0.03
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.6 0 2.25
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS umbrellaColor
+              roughness 0.6
+              metalness 0
+            }
+            geometry Cone {
+              bottomRadius 0.9
+              height 0.35
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.5
+      children [
+        Box {
+          size 1.4 0.9 1
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

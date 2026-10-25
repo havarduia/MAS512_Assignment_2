@@ -1,0 +1,59 @@
+#VRML_SIM R2025a utf8
+# Cartoon street lamp.
+
+PROTO StreetLamp [
+  field SFVec3f    translation  0 0 0
+  field SFString   name         "lamp"
+  field SFColor    poleColor    0.35 0.3 0.5
+]
+{
+  Solid {
+    translation IS translation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 1.6
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS poleColor
+              roughness 0.5
+              metalness 0.2
+            }
+            geometry Cylinder {
+              height 3.2
+              radius 0.08
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 3.35
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0.97 0.85
+              emissiveColor 0.6 0.55 0.4
+              roughness 0.2
+              metalness 0
+            }
+            geometry Sphere {
+              radius 0.28
+              subdivision 3
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 1.6
+      children [
+        Cylinder {
+          height 3.2
+          radius 0.1
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

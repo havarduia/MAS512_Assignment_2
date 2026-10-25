@@ -1,0 +1,136 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Bar table with a striped-looking umbrella (a cone) and two round stools.
+
+PROTO CafeTable [
+  field SFVec3f    translation    0 0 0
+  field SFRotation rotation       0 0 1 0
+  field SFString   name           "cafe table"
+  field SFColor    umbrellaColor  1 0.8 0.7
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.37
+        children [
+          Shape {
+            appearance DEF WHITE PBRAppearance {
+              baseColor 0.99 0.98 0.96
+              roughness 0.5
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.74
+              radius 0.09
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.76
+        children [
+          Shape {
+            appearance USE WHITE
+            geometry Cylinder {
+              height 0.04
+              radius 0.45
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 1.4
+        children [
+          Shape {
+            appearance USE WHITE
+            geometry Cylinder {
+              height 1.3
+              radius 0.03
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 2.15
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS umbrellaColor
+              roughness 0.6
+              metalness 0
+            }
+            geometry Cone {
+              bottomRadius 1.1
+              height 0.4
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 2.38
+        children [
+          Shape {
+            appearance USE WHITE
+            geometry Sphere {
+              radius 0.06
+            }
+          }
+        ]
+      }
+      %< for (const x of [-0.75, 0.75]) { >%
+      Pose {
+        translation %<= x >% 0 0.23
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.8 0.78 0.95
+              roughness 0.6
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.46
+              radius 0.19
+            }
+          }
+        ]
+      }
+      %< } >%
+    ]
+    boundingObject Group {
+      children [
+        Pose {
+          translation 0 0 0.39
+          children [
+            Cylinder {
+              height 0.78
+              radius 0.45
+            }
+          ]
+        }
+        Pose {
+          translation -0.75 0 0.23
+          children [
+            Cylinder {
+              height 0.46
+              radius 0.19
+            }
+          ]
+        }
+        Pose {
+          translation 0.75 0 0.23
+          children [
+            Cylinder {
+              height 0.46
+              radius 0.19
+            }
+          ]
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

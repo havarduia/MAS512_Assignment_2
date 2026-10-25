@@ -1,0 +1,76 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Candy-striped pillar with a ball on top. The red one is the goal, the others are decoys:
+# same shape and size, only the colour changes.
+
+PROTO Beacon [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "beacon"
+  field SFColor    color        0.9 0.08 0.1
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.6
+        children [
+          Shape {
+            appearance DEF BEACON_APP PBRAppearance {
+              baseColor IS color
+              roughness 0.35
+              metalness 0
+            }
+            geometry Cylinder {
+              height 1.2
+              radius 0.3
+            }
+          }
+        ]
+      }
+      %< for (const z of [0.3, 0.9]) { >%
+      Pose {
+        translation 0 0 %<= z >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 1 1
+              roughness 0.4
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.1
+              radius 0.31
+            }
+          }
+        ]
+      }
+      %< } >%
+      Pose {
+        translation 0 0 1.45
+        children [
+          Shape {
+            appearance USE BEACON_APP
+            geometry Sphere {
+              radius 0.3
+              subdivision 3
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.6
+      children [
+        Cylinder {
+          height 1.2
+          radius 0.3
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

@@ -1,0 +1,18 @@
+# q3 runs on the campus "coder" server and is not covered here.
+# q4 also needs Webots installed (its `controller` module ships with Webots, not pip).
+numpy
+matplotlib
+pandas
+scipy
+opencv-python
+ultralytics
+torch==2.7.1
+torchvision==0.22.1
+tensorflow==2.20.0  # newer TF + torch segfault (triton) when loaded in one process (q1)
+scikit-learn
+pyrealsense2
+open3d
+ouster-sdk
+kiss-icp
+pygments
+jupyter

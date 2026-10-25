@@ -1,0 +1,5 @@
+# analysis only - the controller runs inside Webots (R2025a) and needs numpy
+numpy
+pandas
+matplotlib
+pygments    # only for tools/slide_figures.py (code as images)

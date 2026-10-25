@@ -1,0 +1,119 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Market stall ("bancarella"): a counter with crates of pastel fruit, four posts and a striped awning.
+
+PROTO MarketStall [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "market stall"
+  field SFColor    stripeColor  0.7 0.88 0.98
+  field SFColor    fruitColor   0.75 0.92 0.6
+]
+{
+  %< const W = 2.4, D = 1.0; >%
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.45
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.95 0.84 0.68
+              roughness 0.85
+              metalness 0
+            }
+            geometry Box {
+              size %<= W >% %<= D >% 0.9
+            }
+          }
+        ]
+      }
+      %< for (const x of [-0.6, 0.6]) { >%
+      Pose {
+        translation %<= x >% 0 0.98
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.98 0.95 0.9
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 0.9 0.7 0.16
+            }
+          }
+          %< for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) { >%
+          Pose {
+            translation %<= -0.28 + 0.28 * i >% %<= -0.15 + 0.3 * j >% 0.16
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor IS fruitColor
+                  roughness 0.4
+                  metalness 0
+                }
+                geometry Sphere {
+                  radius 0.12
+                  subdivision 2
+                }
+              }
+            ]
+          }
+          %< } >%
+        ]
+      }
+      %< } >%
+      %< for (const x of [-W / 2 + 0.05, W / 2 - 0.05]) for (const y of [-D / 2 + 0.05, D / 2 - 0.05]) { >%
+      Pose {
+        translation %<= x >% %<= y >% 1.1
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.98 0.95 0.9
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 0.08 0.08 2.2
+            }
+          }
+        ]
+      }
+      %< } >%
+      # awning: alternating stripes
+      %< for (let i = 0; i < 8; i++) { const x = -W / 2 - 0.1 + (W + 0.2) * (i + 0.5) / 8; >%
+      Pose {
+        translation %<= x >% 0 2.25
+        children [
+          Shape {
+            appearance PBRAppearance {
+              %< if (i % 2) { >%
+              baseColor 1 1 1
+              %< } else { >%
+              baseColor IS stripeColor
+              %< } >%
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size %<= (W + 0.2) / 8 >% %<= D + 0.5 >% 0.1
+            }
+          }
+        ]
+      }
+      %< } >%
+    ]
+    boundingObject Pose {
+      translation 0 0 0.55
+      children [
+        Box {
+          size %<= W >% %<= D >% 1.1
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

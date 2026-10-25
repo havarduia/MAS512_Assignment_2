@@ -1,0 +1,80 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Cartoon tree: a stick with a big round candy-coloured crown.
+
+PROTO LollipopTree [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "tree"
+  field SFColor    crownColor   0.6 0.9 0.75
+  field SFFloat    height       3.2
+  field SFFloat    crownRadius  1.0
+]
+{
+  %< const h = fields.height.value, r = fields.crownRadius.value; >%
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 %<= (h - r) / 2 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.98 0.95 0.88
+              roughness 0.7
+              metalness 0
+            }
+            geometry Cylinder {
+              height %<= h - r >%
+              radius 0.12
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 %<= h - r * 0.4 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS crownColor
+              roughness 0.5
+              metalness 0
+            }
+            geometry Sphere {
+              radius %<= r >%
+              subdivision 3
+            }
+          }
+          Pose {
+            translation %<= r * 0.35 >% %<= -r * 0.35 >% %<= r * 0.45 >%
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor 1 1 1
+                  roughness 0.3
+                  metalness 0
+                }
+                geometry Sphere {
+                  radius %<= r * 0.28 >%
+                  subdivision 2
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 %<= (h - r) / 2 >%
+      children [
+        Cylinder {
+          height %<= h - r >%
+          radius 0.15
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

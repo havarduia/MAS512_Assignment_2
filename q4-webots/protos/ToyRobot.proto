@@ -1,0 +1,355 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# "Toby": cartoon differential-drive robot.
+# Physics: 2 driven wheels (radius 0.12 m, track 0.60 m) + a passive rear ball caster.
+# Sensors: camera (between the eyes), 2D lidar (front bumper), GPS, IMU, accelerometer, gyro,
+#          wheel encoders ("left/right wheel sensor").
+
+PROTO ToyRobot [
+  field SFVec3f    translation     0 0 0
+  field SFRotation rotation        0 0 1 0
+  field SFString   name            "toby"
+  field SFString   controller      "slip_nav"
+  field MFString   controllerArgs  []
+  field SFBool     supervisor      TRUE
+  field SFColor    bodyColor       1 0.6 0.3      # tangerine, like a certain wrecker's shirt
+  field SFColor    headColor       0.98 0.95 0.88
+  field SFColor    accentColor     0.18 0.72 0.75
+  field SFColor    hubColor        1 0.8 0.25
+]
+{
+  %<
+    const WHEEL_R = 0.12, TRACK = 0.60;
+    const wheels = [['left', 1], ['right', -1]];
+  >%
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    supervisor IS supervisor
+    children [
+      # ---------------- body ----------------
+      Pose {
+        translation 0 0 0.3
+        children [
+          Shape {
+            appearance DEF BODY PBRAppearance {
+              baseColor IS bodyColor
+              roughness 0.35
+              metalness 0
+            }
+            geometry DEF CHASSIS Box {
+              size 0.64 0.46 0.22
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.215
+        children [
+          Shape {
+            appearance DEF ACCENT PBRAppearance {
+              baseColor IS accentColor
+              roughness 0.4
+              metalness 0
+            }
+            geometry Box {
+              size 0.68 0.5 0.07
+            }
+          }
+        ]
+      }
+      # rear lights (pink, so the camera of another robot would never mistake them for the goal)
+      %< for (const y of [0.15, -0.15]) { >%
+      Pose {
+        translation -0.325 %<= y >% 0.34
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 0.55 0.75
+              emissiveColor 0.5 0.2 0.35
+              roughness 0.3
+              metalness 0
+            }
+            geometry Box {
+              size 0.02 0.08 0.04
+            }
+          }
+        ]
+      }
+      %< } >%
+      # neck + head
+      Pose {
+        translation 0.02 0 0.47
+        children [
+          Shape {
+            appearance USE ACCENT
+            geometry Cylinder {
+              height 0.12
+              radius 0.05
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.04 0 0.64
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS headColor
+              roughness 0.35
+              metalness 0
+            }
+            geometry DEF HEAD Box {
+              size 0.3 0.4 0.22
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.04 0 0.765
+        children [
+          Shape {
+            appearance USE ACCENT
+            geometry Box {
+              size 0.32 0.42 0.03
+            }
+          }
+        ]
+      }
+      # eyes
+      %< for (const y of [0.095, -0.095]) { >%
+      Pose {
+        translation 0.19 %<= y >% 0.645
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.08 0.08 0.12
+              roughness 0.1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.03
+              radius 0.065
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.207 %<= y - 0.02 >% 0.67
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 1 1 1
+              emissiveColor 0.6 0.6 0.6
+              roughness 0.1
+              metalness 0
+            }
+            geometry Sphere {
+              radius 0.018
+              subdivision 2
+            }
+          }
+        ]
+      }
+      %< } >%
+      # antenna
+      Pose {
+        translation -0.06 0.13 0.88
+        children [
+          Shape {
+            appearance USE ACCENT
+            geometry Cylinder {
+              height 0.2
+              radius 0.012
+            }
+          }
+          Pose {
+            translation 0 0 0.12
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor IS hubColor
+                  emissiveColor 0.4 0.3 0.05
+                  roughness 0.3
+                  metalness 0
+                }
+                geometry Sphere {
+                  radius 0.04
+                  subdivision 2
+                }
+              }
+            ]
+          }
+        ]
+      }
+      # ---------------- wheels ----------------
+      %< for (const [side, s] of wheels) { >%
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 %<= s * TRACK / 2 >% %<= WHEEL_R >%
+        }
+        device [
+          RotationalMotor {
+            name "%<= side >% wheel motor"
+            maxVelocity 15
+            maxTorque 20
+          }
+          PositionSensor {
+            name "%<= side >% wheel sensor"
+          }
+        ]
+        endPoint Solid {
+          translation 0 %<= s * TRACK / 2 >% %<= WHEEL_R >%
+          rotation 1 0 0 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.16 0.15 0.2
+                roughness 0.9
+                metalness 0
+              }
+              geometry DEF TIRE Cylinder {
+                height 0.08
+                radius %<= WHEEL_R >%
+              }
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor IS hubColor
+                roughness 0.3
+                metalness 0.1
+              }
+              geometry Cylinder {
+                height 0.086
+                radius 0.075
+              }
+            }
+            # spokes, so you can see the wheel turning (and slipping!)
+            %< for (const a of [0, 1.0472, 2.0944]) { >%
+            Pose {
+              rotation 0 0 1 %<= a >%
+              children [
+                Shape {
+                  appearance USE ACCENT
+                  geometry Box {
+                    size 0.15 0.022 0.09
+                  }
+                }
+              ]
+            }
+            %< } >%
+          ]
+          name "%<= side >% wheel"
+          contactMaterial "wheel"
+          boundingObject USE TIRE
+          physics Physics {
+            density -1
+            mass 2
+          }
+        }
+      }
+      %< } >%
+      # passive ball caster (slides on the floor, see ContactProperties "caster")
+      Solid {
+        translation -0.24 0 0.06
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.75 0.75 0.8
+              roughness 0.2
+              metalness 0.6
+            }
+            geometry DEF CASTER Sphere {
+              radius 0.06
+              subdivision 2
+            }
+          }
+        ]
+        name "caster"
+        contactMaterial "caster"
+        boundingObject USE CASTER
+        physics Physics {
+          density -1
+          mass 0.5
+        }
+      }
+      # ---------------- sensors ----------------
+      Camera {
+        translation 0.21 0 0.645
+        name "camera"
+        fieldOfView 1.2
+        width 256
+        height 128
+        far 60
+      }
+      Lidar {
+        translation 0.37 0 0.3
+        name "lidar"
+        horizontalResolution 181
+        fieldOfView 3.14159
+        numberOfLayers 1
+        near 0.07
+        minRange 0.08
+        maxRange 20
+        children [
+          Pose {
+            rotation 0 0 1 0
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor 0.16 0.15 0.2
+                  roughness 0.3
+                  metalness 0.2
+                }
+                geometry Cylinder {
+                  height 0.06
+                  radius 0.05
+                }
+              }
+            ]
+          }
+        ]
+      }
+      GPS {
+        name "gps"
+      }
+      InertialUnit {
+        name "imu"
+      }
+      Accelerometer {
+        name "accelerometer"
+      }
+      Gyro {
+        name "gyro"
+      }
+    ]
+    boundingObject Group {
+      children [
+        Pose {
+          translation 0 0 0.3
+          children [
+            USE CHASSIS
+          ]
+        }
+        Pose {
+          translation 0.04 0 0.64
+          children [
+            USE HEAD
+          ]
+        }
+      ]
+    }
+    physics Physics {
+      density -1
+      mass 25
+      centerOfMass [
+        -0.06 0 0
+      ]
+    }
+  }
+}

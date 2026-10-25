@@ -1,0 +1,7 @@
+# Webots per-user files
+worlds/.*.wbproj
+worlds/.*.jpg
+# Python
+__pycache__/
+*.pyc
+.venv/

@@ -1,0 +1,96 @@
+#VRML_SIM R2025a utf8
+# Round fountain for the middle of the square.
+
+PROTO Fountain [
+  field SFVec3f    translation  0 0 0
+  field SFString   name         "fountain"
+  field SFColor    stoneColor   0.86 0.8 0.95
+  field SFColor    waterColor   0.6 0.85 1
+]
+{
+  Solid {
+    translation IS translation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.3
+        children [
+          Shape {
+            appearance DEF STONE PBRAppearance {
+              baseColor IS stoneColor
+              roughness 0.8
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.6
+              radius 1.8
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 0.61
+        children [
+          Shape {
+            appearance DEF WATER PBRAppearance {
+              baseColor IS waterColor
+              roughness 0.1
+              metalness 0
+              transparency 0.1
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 1.55
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 1.1
+        children [
+          Shape {
+            appearance USE STONE
+            geometry Cylinder {
+              height 1.0
+              radius 0.25
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 1.65
+        children [
+          Shape {
+            appearance USE STONE
+            geometry Cylinder {
+              height 0.15
+              radius 0.8
+            }
+          }
+          Pose {
+            translation 0 0 0.35
+            children [
+              Shape {
+                appearance USE WATER
+                geometry Sphere {
+                  radius 0.35
+                  subdivision 3
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.3
+      children [
+        Cylinder {
+          height 0.6
+          radius 1.8
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

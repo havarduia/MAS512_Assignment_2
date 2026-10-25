@@ -1,0 +1,189 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# A candy-coloured block building made only of boxes ("Niceland" style):
+# body, pixel windows with white sills on every floor, a door, a white roof rim around a coloured roof
+# and a rooftop block.
+
+PROTO ToyBuilding [
+  field SFVec3f    translation   0 0 0
+  field SFRotation rotation      0 0 1 0
+  field SFString   name          "building"
+  field SFVec3f    size          6 6 9          # width (x), depth (y), height (z) [m]
+  field SFColor    color         1 0.72 0.8     # walls
+  field SFColor    trimColor     1 1 1          # roof rim, sills, door frame
+  field SFColor    roofColor     0.85 0.6 0.7   # flat roof inside the rim ("icing" on the cake)
+  field SFColor    windowColor   0.62 0.82 0.95
+  field SFColor    doorColor     0.45 0.35 0.6
+  field SFFloat    floorHeight   2.2
+  field SFBool     rooftop       TRUE           # small block on the roof
+]
+{
+  %<
+    const w = fields.size.value.x, d = fields.size.value.y, h = fields.size.value.z;
+    const fh = fields.floorHeight.value;
+    const floors = Math.max(1, Math.floor((h - 0.6) / fh));
+    const winW = 0.7, winH = 0.9, step = 1.5;
+    // one entry per facade: [axis along the facade, facade length, normal sign, normal axis]
+    const faces = [['x', w, -1, 'y'], ['x', w, 1, 'y'], ['y', d, -1, 'x'], ['y', d, 1, 'x']];
+  >%
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 %<= h / 2 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS color
+              roughness 0.85
+              metalness 0
+            }
+            geometry Box {
+              size %<= w >% %<= d >% %<= h >%
+            }
+          }
+        ]
+      }
+      # roof rim
+      Pose {
+        translation 0 0 %<= h + 0.12 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS trimColor
+              roughness 0.6
+              metalness 0
+            }
+            geometry Box {
+              size %<= w + 0.3 >% %<= d + 0.3 >% 0.24
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0 %<= h + 0.26 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS roofColor
+              roughness 0.9
+              metalness 0
+            }
+            geometry Box {
+              size %<= w - 0.3 >% %<= d - 0.3 >% 0.06
+            }
+          }
+        ]
+      }
+      %< if (fields.rooftop.value) { >%
+      Pose {
+        translation %<= -w / 5 >% %<= d / 6 >% %<= h + 0.24 + 0.6 >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS doorColor
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size %<= w / 3 >% %<= d / 3 >% 1.2
+            }
+          }
+        ]
+      }
+      %< } >%
+      # door on the -y facade
+      Pose {
+        translation 0 %<= -d / 2 - 0.04 >% 1.1
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS trimColor
+              roughness 0.6
+              metalness 0
+            }
+            geometry Box {
+              size 1.5 0.08 2.2
+            }
+          }
+          Pose {
+            translation 0 -0.03 -0.05
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor IS doorColor
+                  roughness 0.7
+                  metalness 0
+                }
+                geometry Box {
+                  size 1.1 0.06 2.0
+                }
+              }
+            ]
+          }
+        ]
+      }
+      %<
+        for (const [along, len, sign, normal] of faces) {
+          const cols = Math.max(1, Math.floor((len - 0.8) / step));
+          for (let r = 0; r < floors; r++) {
+            const z = 0.6 + fh * (r + 0.6);
+            if (z + winH / 2 > h - 0.3) continue;
+            for (let c = 0; c < cols; c++) {
+              const t = (c - (cols - 1) / 2) * step;
+              if (r === 0 && normal === 'y' && sign < 0 && Math.abs(t) < 1.0) continue;  // keep the door free
+              const off = (normal === 'y' ? d : w) / 2 + 0.02;
+              const x = along === 'x' ? t : sign * off;
+              const y = along === 'y' ? t : sign * off;
+              const sx = along === 'x' ? winW : 0.06;
+              const sy = along === 'y' ? winW : 0.06;
+      >%
+      Pose {
+        translation %<= x >% %<= y >% %<= z >%
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS windowColor
+              roughness 0.25
+              metalness 0
+            }
+            geometry Box {
+              size %<= sx >% %<= sy >% %<= winH >%
+            }
+          }
+          Pose {
+            translation 0 0 %<= -winH / 2 - 0.06 >%
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor IS trimColor
+                  roughness 0.6
+                  metalness 0
+                }
+                geometry Box {
+                  size %<= sx + (along === 'x' ? 0.2 : 0.06) >% %<= sy + (along === 'y' ? 0.2 : 0.06) >% 0.12
+                }
+              }
+            ]
+          }
+        ]
+      }
+      %<
+            }
+          }
+        }
+      >%
+    ]
+    boundingObject Pose {
+      translation 0 0 %<= h / 2 >%
+      children [
+        Box {
+          size %<= w >% %<= d >% %<= h >%
+        }
+      ]
+    }
+    locked TRUE
+  }
+}

@@ -1,0 +1,80 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Low flower box ("fioriera") with round bushes and a few flowers. Low on purpose:
+# the lidar (0.3 m) must avoid it, but the camera (0.65 m) can still see over the bushes.
+
+PROTO Planter [
+  field SFVec3f    translation  0 0 0
+  field SFRotation rotation     0 0 1 0
+  field SFString   name         "planter"
+  field SFFloat    length       1.8
+  field SFColor    color        0.98 0.88 0.78
+  field SFColor    flowerColor  1 0.82 0.9
+]
+{
+  %< const L = fields.length.value; const n = Math.max(2, Math.round(L / 0.6)); >%
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    children [
+      Pose {
+        translation 0 0 0.25
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS color
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size %<= L >% 0.7 0.5
+            }
+          }
+        ]
+      }
+      %< for (let i = 0; i < n; i++) { const x = -L / 2 + L * (i + 0.5) / n; >%
+      Pose {
+        translation %<= x >% 0 0.55
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.62 0.84 0.62
+              roughness 0.7
+              metalness 0
+            }
+            geometry Sphere {
+              radius 0.24
+              subdivision 2
+            }
+          }
+          Pose {
+            translation 0.1 -0.12 0.17
+            children [
+              Shape {
+                appearance PBRAppearance {
+                  baseColor IS flowerColor
+                  roughness 0.5
+                  metalness 0
+                }
+                geometry Sphere {
+                  radius 0.07
+                }
+              }
+            ]
+          }
+        ]
+      }
+      %< } >%
+    ]
+    boundingObject Pose {
+      translation 0 0 0.25
+      children [
+        Box {
+          size %<= L >% 0.7 0.5
+        }
+      ]
+    }
+    locked TRUE
+  }
+}
